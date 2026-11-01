@@ -80,12 +80,22 @@ export const MetricsBento: React.FC = () => {
               </p>
             </div>
             <div className="mt-6 flex flex-wrap gap-1.5">
-              <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-neutral-800 dark:text-neutral-200">
+              <a
+                href="https://docebencao.com.br"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-2.5 py-1 rounded-full text-xs font-semibold bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-neutral-800 dark:text-neutral-200 hover:border-brand-lime transition-colors"
+              >
                 docebencao.com.br
-              </span>
-              <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-neutral-800 dark:text-neutral-200">
-                @docebencaooficial
-              </span>
+              </a>
+              <a
+                href="https://instagram.com/docebencao.oficial"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-2.5 py-1 rounded-full text-xs font-semibold bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-neutral-800 dark:text-neutral-200 hover:border-brand-lime transition-colors"
+              >
+                @docebencao.oficial
+              </a>
             </div>
           </div>
 

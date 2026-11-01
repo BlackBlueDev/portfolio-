@@ -93,7 +93,7 @@ export const initialPortfolioData: PortfolioData = {
       technologies: ['Gestão de Negócios', 'Precificação', 'Produção Artesanal', 'Web Design', 'Marketing Digital'],
       image: './doce-bencao.jpg',
       link: 'https://docebencao.com.br',
-      instagram: 'https://instagram.com/docebencaooficial'
+      instagram: 'https://instagram.com/docebencao.oficial'
     },
     {
       id: 'manutencao-computadores',
@@ -126,23 +126,6 @@ export const initialPortfolioData: PortfolioData = {
       ],
       technologies: ['Projeção Data Show', 'Iluminação LED', 'Edição de Vídeo', 'Pós-Produção Multimídia', 'Softwares de Mídia'],
       image: 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=1200&q=80'
-    },
-    {
-      id: 'dev-web-automacao',
-      title: 'Desenvolvimento Web & Automação com IA',
-      subtitle: 'Aplicações Web Rápidas, Dark Mode & Assistentes de Voz',
-      category: 'tecnologia',
-      categoryLabel: 'Tecnologia & Sistemas',
-      tag: 'Desenvolvimento Web • Cloudflare',
-      description: 'Desenvolvimento de soluções digitais modernas, landing pages com estética dark mode, catálogos e automações sem custos fixos desnecessários de servidor.',
-      features: [
-        'Aplicações Web Modernas: Sites responsivos com HTML5, CSS3, JavaScript, React e Node.js.',
-        'Cloudflare & DNS: Hospedagem 24/7 de alta velocidade, segurança SSL e proteção de borda.',
-        'Automação & IA: Criação de scripts e fluxos com IA e voz para acelerar operações no computador.'
-      ],
-      technologies: ['HTML5', 'CSS3', 'JavaScript', 'React', 'Node.js', 'Cloudflare', 'Automação IA'],
-      image: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80',
-      github: 'https://github.com/BlackBlueDev'
     }
   ],
   reviews: []

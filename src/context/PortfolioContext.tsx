@@ -23,7 +23,8 @@ interface PortfolioContextType {
   importDataJSON: (jsonString: string) => { success: boolean; error?: string };
 }
 
-const STORAGE_KEY = 'mickael_portfolio_data_v4';
+const STORAGE_KEY = 'mickael_portfolio_data_v5';
+const STORAGE_KEY_V4 = 'mickael_portfolio_data_v4';
 const STORAGE_KEY_V3 = 'mickael_portfolio_data_v3';
 const STORAGE_KEY_V2 = 'mickael_portfolio_data_v2';
 const STORAGE_KEY_V1 = 'mickael_portfolio_data_v1';
@@ -102,6 +103,9 @@ function sanitizeAndMerge(parsed: any, base: PortfolioData): PortfolioData {
   let projects: ProjectItem[] = Array.isArray(parsed.projects) && parsed.projects.length > 0
     ? parsed.projects
     : base.projects;
+
+  // Filter out [4] card Desenvolvimento Web & Automação com IA
+  projects = projects.filter((p: any) => p?.id !== 'dev-web-automacao' && !/desenvolvimento web & automação/i.test(p?.title || ''));
   
   // Clean audio projects from storage
   projects = projects.map((p: any) => {
@@ -111,6 +115,7 @@ function sanitizeAndMerge(parsed: any, base: PortfolioData): PortfolioData {
     let description = p?.description || '';
     let technologies = Array.isArray(p?.technologies) ? p.technologies : [];
     let features = Array.isArray(p?.features) ? p.features : [];
+    let instagram = p?.instagram || '';
 
     // Migrate audiovisual card to clean visual media card
     if (p.id === 'audiovisual-sonorizacao' || category === 'audiovisual' || /sonorização/i.test(title)) {
@@ -140,6 +145,7 @@ function sanitizeAndMerge(parsed: any, base: PortfolioData): PortfolioData {
       image = './gestor-logo.jpg';
     } else if (p.id === 'doce-bencao' || /doce b[eê]n[cç][aã]o/i.test(title)) {
       image = './doce-bencao.jpg';
+      instagram = 'https://instagram.com/docebencao.oficial';
     }
 
     return {
@@ -150,19 +156,13 @@ function sanitizeAndMerge(parsed: any, base: PortfolioData): PortfolioData {
       description,
       technologies,
       features,
-      image
+      image,
+      instagram
     };
   });
 
-  // [4] Reviews - Remove fake/sample reviews (rev-1, rev-2, rev-3 or template reviews) to give room for real reviews
-  const rawReviews: ReviewItem[] = Array.isArray(parsed.reviews) ? parsed.reviews : [];
-  const reviews: ReviewItem[] = rawReviews.filter((r: ReviewItem) => {
-    if (!r || !r.id) return false;
-    // Strip template reviews
-    if (r.id === 'rev-1' || r.id === 'rev-2' || r.id === 'rev-3') return false;
-    if (/Gabriel Arantes|Cliente Manutenção|Cliente Doce Bênção/i.test(r.name)) return false;
-    return true;
-  });
+  // [1] Reviews completely removed
+  const reviews: ReviewItem[] = [];
 
   return {
     personalInfo,
@@ -190,11 +190,23 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   // Portfolio data state with safe migration and deep merge
   const [data, setData] = useState<PortfolioData>(() => {
     try {
-      // 1. Check current v4 storage key
-      const savedV4 = localStorage.getItem(STORAGE_KEY);
+      // 1. Check current v5 storage key
+      const savedV5 = localStorage.getItem(STORAGE_KEY);
+      if (savedV5) {
+        const parsed = JSON.parse(savedV5);
+        return sanitizeAndMerge(parsed, initialPortfolioData);
+      }
+
+      // 2. Check legacy v4 storage key and migrate
+      const savedV4 = localStorage.getItem(STORAGE_KEY_V4);
       if (savedV4) {
         const parsed = JSON.parse(savedV4);
-        return sanitizeAndMerge(parsed, initialPortfolioData);
+        const migrated = sanitizeAndMerge(parsed, initialPortfolioData);
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
+          localStorage.removeItem(STORAGE_KEY_V4);
+        } catch (err) {}
+        return migrated;
       }
 
       // 2. Check legacy v3 storage key and migrate
