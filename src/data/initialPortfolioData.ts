@@ -10,9 +10,9 @@ export const initialPortfolioData: PortfolioData = {
     status: 'Disponível para novas oportunidades',
     headline: 'Olá, eu sou Mickael',
     titleItalic: 'Desenvolvedor & Gestor',
-    shortBio: 'Profissional multidisciplinar com atuação prática em desenvolvimento de sistemas web (SaaS), manutenção de computadores, sonoplastia de eventos ao vivo e gestão operacional e financeira de negócios.',
-    fullBio: 'Olá, sou Mickael de Lima Silva. Sou um profissional multidisciplinar com perfil prático ("mão na massa"), focado em unir tecnologia, gestão de negócios e operações físicas para resolver problemas reais.\n\n• Na Tecnologia: Desenvolvo aplicações web modernas (SaaS), sites e catálogos digitais com automação por voz/IA e atuo no diagnóstico, montagem e manutenção completa de computadores.\n• No Audiovisual: Opero sistemas de som, projeção, iluminação de palco e edição de vídeo para eventos institucionais.\n• Nos Negócios e Operações: Tenho experiência real em gestão de custos (CMV), precificação para atacado e varejo, controle de caixa/estoque, logística interna, manutenção predial e atendimento ao cliente.',
-    profileImage: '/profile_clean.png',
+    shortBio: 'Profissional multidisciplinar com atuação prática em desenvolvimento de sistemas web (SaaS), manutenção de computadores, projeção visual de eventos e gestão operacional e financeira de negócios.',
+    fullBio: 'Olá, sou Mickael de Lima Silva. Sou um profissional multidisciplinar com perfil prático ("mão na massa"), focado em unir tecnologia, gestão de negócios e operações físicas para resolver problemas reais.\n\n• Na Tecnologia & Hardware: Desenvolvo aplicações web modernas (SaaS), sites responsivos, automações com IA/voz e realizo diagnóstico, montagem e manutenção completa de computadores.\n• Na Mídia & Eventos: Opero sistemas de projeção Data Show, dinâmica de apresentação e edição de vídeo institucional e promocional.\n• Nos Negócios e Operações: Tenho experiência real em gestão de custos (CMV), precificação para atacado e varejo, controle de caixa/estoque, logística interna e atendimento ao cliente.',
+    profileImage: './profile_clean.png',
     whatsapp: '(81) 99124-5328',
     whatsappLink: 'https://wa.me/5581991245328',
     email: 'mickaeldlima@hotmail.com',
@@ -24,8 +24,8 @@ export const initialPortfolioData: PortfolioData = {
   },
   strengths: [
     {
-      title: 'Polivalência Real (Digital + Físico)',
-      description: 'Facilidade para transitar entre o digital (programar um sistema SaaS, criar sites ou formatar PCs) e o operacional físico (montar som de evento, organizar estoque ou controle produtivo).'
+      title: 'Versatilidade Técnica & Operacional',
+      description: 'Facilidade para atuar com agilidade unindo tecnologia, diagnóstico de hardware e gestão de rotinas produtivas com foco em resultados práticos.'
     },
     {
       title: 'Visão de Negócio & Economia',
@@ -38,10 +38,6 @@ export const initialPortfolioData: PortfolioData = {
   ],
   skills: [
     {
-      category: 'Desenvolvimento & Cloud',
-      items: ['React', 'JavaScript', 'HTML5', 'CSS3', 'Node.js', 'Python', 'SQLite', 'Netlify', 'Cloudflare', 'Git']
-    },
-    {
       category: 'Hardware & Suporte',
       items: ['Manutenção de Computadores', 'Montagem de PCs', 'Diagnóstico de Hardware', 'Formatação Windows 10/11', 'Pacote Office']
     },
@@ -50,12 +46,12 @@ export const initialPortfolioData: PortfolioData = {
       items: ['Gestão de Custos (CMV)', 'Precificação Atacado/Varejo', 'Controle de Estoque', 'Operador de Caixa', 'Vendas']
     },
     {
-      category: 'Audiovisual & Eventos',
-      items: ['Sonorização Ao Vivo', 'Mesas de Som', 'Projeção Data Show', 'Iluminação LED', 'Edição de Vídeo']
+      category: 'Mídia Visual & Eventos',
+      items: ['Projeção Data Show', 'Edição de Vídeo', 'Pós-Produção Multimídia', 'Softwares de Mídia']
     },
     {
       category: 'Operações & Logística',
-      items: ['Logística de Eventos', 'Manutenção Predial', 'Controle de Produção', 'Atendimento ao Público']
+      items: ['Controle de Produção', 'Atendimento ao Público', 'Organização de Estoque']
     }
   ],
   projects: [
@@ -68,12 +64,12 @@ export const initialPortfolioData: PortfolioData = {
       tag: 'SaaS • Automação por Voz',
       description: 'Plataforma SaaS moderna desenvolvida para descomplicar a rotina financeira de pequenos empreendedores (autônomos no CPF, MEI e Simples Nacional).',
       features: [
-        'Captação Inteligente por Áudio: O empreendedor fala o que vendeu ou gastou, e a plataforma interpreta e lança automaticamente.',
+        'Captação por Comando de Voz & IA: O empreendedor fala o que vendeu ou gastou, e a plataforma interpreta e lança automaticamente.',
         'Caixa e Estoque Sincronizados: Atualiza o fluxo de caixa na hora e abate/adiciona itens do estoque em tempo real.',
         'Arquitetura SaaS Moderna: Interface rápida para celular e computador com controle de assinaturas recorrentes.'
       ],
       technologies: ['SaaS', 'JavaScript', 'Node.js', 'HTML5', 'CSS3', 'Automação por Voz', 'Gestão Financeira'],
-      image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80',
+      image: './gestor-logo.jpg',
       link: 'https://gestooapp.com',
       partner: {
         name: 'Gabriel Arantes',
@@ -95,7 +91,7 @@ export const initialPortfolioData: PortfolioData = {
         'Engenharia de Custos: Modelagem de CMV, precificação para revendedores e controle rigoroso de insumos.'
       ],
       technologies: ['Gestão de Negócios', 'Precificação', 'Produção Artesanal', 'Web Design', 'Marketing Digital'],
-      image: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=1200&q=80',
+      image: './doce-bencao.jpg',
       link: 'https://docebencao.com.br',
       instagram: 'https://instagram.com/docebencaooficial'
     },
@@ -116,20 +112,20 @@ export const initialPortfolioData: PortfolioData = {
       image: 'https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?auto=format&fit=crop&w=1200&q=80'
     },
     {
-      id: 'audiovisual-sonorizacao',
-      title: 'Sonorização, Projeção & Edição de Vídeo',
-      subtitle: 'Operação Técnica para Eventos Institucionais',
-      category: 'audiovisual',
-      categoryLabel: 'Audiovisual & Mídia',
-      tag: 'Audiovisual • Ao Vivo',
-      description: 'Atuação prática na sonoplastia e projeção visual de eventos, garantindo fidelidade acústica, dinâmica de palco e registro multimídia.',
+      id: 'projecao-multimidia',
+      title: 'Projeção Visual, Iluminação & Edição de Vídeo',
+      subtitle: 'Operação Técnica Multimídia & Eventos Institucionais',
+      category: 'midia',
+      categoryLabel: 'Mídia Visual & Eventos',
+      tag: 'Multimídia • Mídia Visual',
+      description: 'Atuação técnica na projeção visual, iluminação cênica de palco e edição de vídeos para eventos corporativos e institucionais.',
       features: [
-        'Projeção & Iluminação: Operação de Data Show com softwares de mídia ao vivo e controle de iluminação LED de palco.',
-        'Mesas de Som: Alinhamento de canais, microfonação, equalização ao vivo e mixagem sem microfonia.',
-        'Edição Multimídia: Captação e edição ágil de vídeo para divulgação institucional e redes sociais.'
+        'Projeção Data Show: Operação de sistemas de projeção, softwares de apresentação e gerenciamento de mídia em tempo real.',
+        'Iluminação Cênica: Configuração e controle de refletores LED e dinamismo de palco.',
+        'Edição de Vídeo: Captação e pós-produção de materiais em vídeo para canais institucionais e redes sociais.'
       ],
-      technologies: ['Áudio Ao Vivo', 'Mesas de Som', 'Projeção Data Show', 'Iluminação LED', 'Edição de Vídeo'],
-      image: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=1200&q=80'
+      technologies: ['Projeção Data Show', 'Iluminação LED', 'Edição de Vídeo', 'Pós-Produção Multimídia', 'Softwares de Mídia'],
+      image: 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=1200&q=80'
     },
     {
       id: 'dev-web-automacao',
@@ -149,27 +145,5 @@ export const initialPortfolioData: PortfolioData = {
       github: 'https://github.com/BlackBlueDev'
     }
   ],
-  reviews: [
-    {
-      id: 'rev-1',
-      name: 'Gabriel Arantes',
-      rating: 5,
-      comment: 'Parceiro espetacular no desenvolvimento do GestooApp. Une visão prática de negócio com execução rápida de código.',
-      date: '15/10/2026'
-    },
-    {
-      id: 'rev-2',
-      name: 'Cliente Manutenção PC',
-      rating: 5,
-      comment: 'Montou meu computador gamer com organização de cabos impecável e temperaturas baixas. Recomendo muito!',
-      date: '22/10/2026'
-    },
-    {
-      id: 'rev-3',
-      name: 'Cliente Doce Bênção',
-      rating: 5,
-      comment: 'Sobremesas artesanais de outro nível, sabor e embalagens profissionais. Atendimento nota 10!',
-      date: '28/10/2026'
-    }
-  ]
+  reviews: []
 };

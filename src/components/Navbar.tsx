@@ -28,9 +28,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onContactClick }) => {
   ];
 
   const cycleTheme = () => {
-    if (theme === 'light') setTheme('dark');
-    else if (theme === 'dark') setTheme('navy');
-    else setTheme('light');
+    setTheme(theme === 'dark' ? 'light' : 'dark');
   };
 
   return (
@@ -82,12 +80,10 @@ export const Navbar: React.FC<NavbarProps> = ({ onContactClick }) => {
             {/* Quick Theme Toggle Button */}
             <button
               onClick={cycleTheme}
-              className="p-2 rounded-full bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-300 transition-colors"
-              title={`Tema atual: ${theme}. Clique para alternar.`}
+              className="p-2 rounded-full bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-300 transition-colors cursor-pointer"
+              title={theme === 'dark' ? 'Alternar para Tema Claro' : 'Alternar para Tema Dark'}
             >
-              {theme === 'light' && <Sun className="w-4 h-4 text-amber-500" />}
-              {theme === 'dark' && <Moon className="w-4 h-4 text-brand-lime" />}
-              {theme === 'navy' && <Palette className="w-4 h-4 text-sky-400" />}
+              {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-neutral-800" />}
             </button>
 
             {/* Password-protected Settings Button */}
@@ -114,12 +110,10 @@ export const Navbar: React.FC<NavbarProps> = ({ onContactClick }) => {
             {/* Theme button mobile */}
             <button
               onClick={cycleTheme}
-              className="p-2 rounded-xl bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300"
+              className="p-2 rounded-xl bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 cursor-pointer"
               aria-label="Alternar tema"
             >
-              {theme === 'light' && <Sun className="w-4 h-4 text-amber-500" />}
-              {theme === 'dark' && <Moon className="w-4 h-4 text-brand-lime" />}
-              {theme === 'navy' && <Palette className="w-4 h-4 text-sky-400" />}
+              {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-neutral-800" />}
             </button>
 
             {/* Admin Settings mobile */}

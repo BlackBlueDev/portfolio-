@@ -36,7 +36,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
           <img
             src={project.image}
             alt={project.title}
-            className="w-full h-full object-cover object-center opacity-90"
+            className={`w-full h-full ${project.id === 'gestoo-app' || project.id === 'doce-bencao' ? 'object-contain p-4 bg-white' : 'object-cover'} object-center opacity-95`}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent" />
           

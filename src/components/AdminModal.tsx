@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { usePortfolio } from '../context/PortfolioContext';
-import { ProjectItem, ThemeMode } from '../types';
+import { ProjectItem } from '../types';
 import { 
   Lock, Unlock, X, Sun, Moon, Palette, User, Briefcase, 
   Phone, Trash2, Plus, Edit2, Save, RotateCcw, Check, 
-  ExternalLink, Eye, EyeOff, AlertCircle
+  Eye, EyeOff, AlertCircle, Database, Download, Upload, Copy,
+  CheckCircle2, HardDrive, ShieldCheck
 } from 'lucide-react';
 
 export const AdminModal: React.FC = () => {
@@ -21,14 +22,20 @@ export const AdminModal: React.FC = () => {
     addProject,
     updateProject,
     deleteProject,
-    resetToDefault
+    resetToDefault,
+    exportDataJSON,
+    importDataJSON
   } = usePortfolio();
 
   const [passwordInput, setPasswordInput] = useState('');
   const [passwordError, setPasswordError] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [activeTab, setActiveTab] = useState<'theme' | 'profile' | 'projects' | 'contacts'>('theme');
+  const [activeTab, setActiveTab] = useState<'theme' | 'profile' | 'projects' | 'contacts' | 'storage'>('theme');
   const [notification, setNotification] = useState<string | null>(null);
+  const [jsonCopied, setJsonCopied] = useState(false);
+
+  // File input ref for backup import
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Profile form state
   const [profileForm, setProfileForm] = useState({ ...data.personalInfo });
@@ -37,11 +44,18 @@ export const AdminModal: React.FC = () => {
   const [editingProject, setEditingProject] = useState<ProjectItem | null>(null);
   const [isNewProject, setIsNewProject] = useState(false);
 
+  // Keep profileForm in sync with data
+  useEffect(() => {
+    if (data?.personalInfo) {
+      setProfileForm({ ...data.personalInfo });
+    }
+  }, [data.personalInfo, isAdminOpen]);
+
   if (!isAdminOpen) return null;
 
   const showToast = (msg: string) => {
     setNotification(msg);
-    setTimeout(() => setNotification(null), 3000);
+    setTimeout(() => setNotification(null), 3500);
   };
 
   const handleLogin = (e: React.FormEvent) => {
@@ -58,7 +72,7 @@ export const AdminModal: React.FC = () => {
   const handleSaveProfile = (e: React.FormEvent) => {
     e.preventDefault();
     updatePersonalInfo(profileForm);
-    showToast('Informações do perfil atualizadas!');
+    showToast('Informações do perfil atualizadas e salvas com sucesso!');
   };
 
   const handleStartNewProject = () => {
@@ -70,6 +84,7 @@ export const AdminModal: React.FC = () => {
       categoryLabel: 'Tecnologia & Sistemas',
       tag: 'Novo Projeto',
       description: '',
+      features: [],
       technologies: ['React', 'JavaScript'],
       image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80',
       link: ''
@@ -84,10 +99,10 @@ export const AdminModal: React.FC = () => {
 
     if (isNewProject) {
       addProject(editingProject);
-      showToast('Novo projeto adicionado com sucesso!');
+      showToast('Novo card adicionado com sucesso!');
     } else {
       updateProject(editingProject);
-      showToast('Projeto atualizado com sucesso!');
+      showToast('Card atualizado com sucesso!');
     }
     setEditingProject(null);
     setIsNewProject(false);
@@ -96,8 +111,58 @@ export const AdminModal: React.FC = () => {
   const handleDeleteProject = (id: string, title: string) => {
     if (window.confirm(`Tem certeza que deseja excluir o projeto "${title}"?`)) {
       deleteProject(id);
-      showToast('Projeto excluído.');
+      showToast('Card excluído com sucesso.');
     }
+  };
+
+  // Export Backup File (.json)
+  const handleDownloadBackup = () => {
+    try {
+      const jsonStr = exportDataJSON();
+      const blob = new Blob([jsonStr], { type: 'application/json;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      const dateStr = new Date().toISOString().split('T')[0];
+      link.href = url;
+      link.setAttribute('download', `portfolio-mickael-backup-${dateStr}.json`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      showToast('Arquivo de backup baixado com sucesso!');
+    } catch (err) {
+      alert('Erro ao gerar arquivo de backup.');
+    }
+  };
+
+  // Import Backup File
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const content = event.target?.result as string;
+      if (content) {
+        const result = importDataJSON(content);
+        if (result.success) {
+          showToast('Backup importado com sucesso! Todas as informações foram restauradas.');
+        } else {
+          alert(`Falha ao importar backup: ${result.error}`);
+        }
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  };
+
+  // Copy JSON to clipboard
+  const handleCopyJSON = () => {
+    const jsonStr = exportDataJSON();
+    navigator.clipboard.writeText(jsonStr);
+    setJsonCopied(true);
+    showToast('JSON copiado para a área de transferência!');
+    setTimeout(() => setJsonCopied(false), 3000);
   };
 
   return (
@@ -143,8 +208,9 @@ export const AdminModal: React.FC = () => {
 
         {/* Toast Notification */}
         {notification && (
-          <div className="bg-emerald-600 text-white text-xs font-medium px-4 py-2 text-center animate-pulse">
-            ✓ {notification}
+          <div className="bg-emerald-600 text-white text-xs font-medium px-4 py-2.5 text-center animate-pulse flex items-center justify-center gap-2">
+            <CheckCircle2 className="w-4 h-4" />
+            <span>{notification}</span>
           </div>
         )}
 
@@ -208,7 +274,7 @@ export const AdminModal: React.FC = () => {
               <div className="flex flex-wrap items-center gap-2 pb-4 border-b border-neutral-200 dark:border-neutral-800">
                 <button
                   onClick={() => setActiveTab('theme')}
-                  className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-colors ${
+                  className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-colors ${
                     activeTab === 'theme'
                       ? 'bg-neutral-950 dark:bg-brand-lime text-white dark:text-black shadow-xs'
                       : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200'
@@ -220,7 +286,7 @@ export const AdminModal: React.FC = () => {
 
                 <button
                   onClick={() => setActiveTab('profile')}
-                  className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-colors ${
+                  className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-colors ${
                     activeTab === 'profile'
                       ? 'bg-neutral-950 dark:bg-brand-lime text-white dark:text-black shadow-xs'
                       : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200'
@@ -232,7 +298,7 @@ export const AdminModal: React.FC = () => {
 
                 <button
                   onClick={() => setActiveTab('projects')}
-                  className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-colors ${
+                  className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-colors ${
                     activeTab === 'projects'
                       ? 'bg-neutral-950 dark:bg-brand-lime text-white dark:text-black shadow-xs'
                       : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200'
@@ -244,14 +310,26 @@ export const AdminModal: React.FC = () => {
 
                 <button
                   onClick={() => setActiveTab('contacts')}
-                  className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-colors ${
+                  className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-colors ${
                     activeTab === 'contacts'
                       ? 'bg-neutral-950 dark:bg-brand-lime text-white dark:text-black shadow-xs'
                       : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200'
                   }`}
                 >
                   <Phone className="w-4 h-4" />
-                  <span>Contatos & Links</span>
+                  <span>Contatos</span>
+                </button>
+
+                <button
+                  onClick={() => setActiveTab('storage')}
+                  className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-colors ${
+                    activeTab === 'storage'
+                      ? 'bg-neutral-950 dark:bg-brand-lime text-white dark:text-black shadow-xs'
+                      : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200'
+                  }`}
+                >
+                  <Database className="w-4 h-4 text-emerald-500" />
+                  <span>Backup & Dados</span>
                 </button>
               </div>
 
@@ -265,7 +343,31 @@ export const AdminModal: React.FC = () => {
                     </p>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {/* Theme Dark (Padrão) */}
+                    <button
+                      onClick={() => setTheme('dark')}
+                      className={`p-5 rounded-2xl border text-left transition-all relative ${
+                        theme === 'dark'
+                          ? 'border-brand-lime bg-neutral-900 ring-2 ring-brand-lime'
+                          : 'border-neutral-200 dark:border-neutral-700 bg-neutral-950 text-white hover:border-neutral-600'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="w-8 h-8 rounded-full bg-neutral-800 text-neutral-200 flex items-center justify-center">
+                          <Moon className="w-4 h-4" />
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[10px] font-semibold text-neutral-400 border border-neutral-700 px-2 py-0.5 rounded-full">Padrão</span>
+                          {theme === 'dark' && <span className="text-xs font-bold text-black bg-brand-lime px-2 py-0.5 rounded-full">Ativo</span>}
+                        </div>
+                      </div>
+                      <h5 className="font-bold text-sm text-white">Tema Dark (Black)</h5>
+                      <p className="text-xs text-neutral-400 mt-1">
+                        Estética moderna em preto profundo e carvão, com alto contraste e acentos em verde-limão neon.
+                      </p>
+                    </button>
+
                     {/* Theme Light */}
                     <button
                       onClick={() => setTheme('light')}
@@ -283,49 +385,7 @@ export const AdminModal: React.FC = () => {
                       </div>
                       <h5 className="font-bold text-sm text-neutral-900 dark:text-neutral-100">Tema Claro</h5>
                       <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
-                        Fundo off-white limpo, tipografia contrastante e halo verde-limão vibrante.
-                      </p>
-                    </button>
-
-                    {/* Theme Dark */}
-                    <button
-                      onClick={() => setTheme('dark')}
-                      className={`p-5 rounded-2xl border text-left transition-all relative ${
-                        theme === 'dark'
-                          ? 'border-brand-lime bg-neutral-900 ring-2 ring-brand-lime'
-                          : 'border-neutral-200 dark:border-neutral-700 bg-neutral-950 text-white hover:border-neutral-600'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="w-8 h-8 rounded-full bg-neutral-800 text-neutral-200 flex items-center justify-center">
-                          <Moon className="w-4 h-4" />
-                        </div>
-                        {theme === 'dark' && <span className="text-xs font-bold text-black bg-brand-lime px-2 py-0.5 rounded-full">Ativo</span>}
-                      </div>
-                      <h5 className="font-bold text-sm text-white">Tema Dark</h5>
-                      <p className="text-xs text-neutral-400 mt-1">
-                        Estética moderna em preto e carvão profundo, com alto contraste e neon.
-                      </p>
-                    </button>
-
-                    {/* Theme Navy */}
-                    <button
-                      onClick={() => setTheme('navy')}
-                      className={`p-5 rounded-2xl border text-left transition-all relative ${
-                        theme === 'navy'
-                          ? 'border-sky-400 bg-[#0c1a3e] ring-2 ring-sky-400'
-                          : 'border-neutral-200 dark:border-neutral-700 bg-[#070e24] text-white hover:border-sky-500'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="w-8 h-8 rounded-full bg-blue-900/50 text-sky-400 flex items-center justify-center">
-                          <Palette className="w-4 h-4" />
-                        </div>
-                        {theme === 'navy' && <span className="text-xs font-bold text-black bg-sky-400 px-2 py-0.5 rounded-full">Ativo</span>}
-                      </div>
-                      <h5 className="font-bold text-sm text-white">Azul Marinho</h5>
-                      <p className="text-xs text-sky-200/70 mt-1">
-                        Paleta sofisticada em azul marinho profundo (Midnight Navy) com acentos ciano.
+                        Fundo off-white limpo, tipografia contrastante e halo suave.
                       </p>
                     </button>
                   </div>
@@ -344,7 +404,7 @@ export const AdminModal: React.FC = () => {
                     </div>
                     <button
                       type="submit"
-                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-brand-lime text-black font-bold text-xs hover:opacity-90 shadow-xs"
+                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-brand-lime text-black font-bold text-xs hover:opacity-90 shadow-xs cursor-pointer"
                     >
                       <Save className="w-3.5 h-3.5" />
                       <span>Salvar Alterações</span>
@@ -366,7 +426,7 @@ export const AdminModal: React.FC = () => {
 
                     <div>
                       <label className="block text-xs font-semibold mb-1 text-neutral-600 dark:text-neutral-300">
-                        Status / Disponibilidade (Pílula com ponto luminoso)
+                        Status / Disponibilidade (Pílula pulsante)
                       </label>
                       <input
                         type="text"
@@ -402,7 +462,7 @@ export const AdminModal: React.FC = () => {
 
                     <div className="sm:col-span-2">
                       <label className="block text-xs font-semibold mb-1 text-neutral-600 dark:text-neutral-300">
-                        URL da Imagem de Perfil (Fundo transparente ideal)
+                        URL da Imagem de Perfil (Fundo transparente)
                       </label>
                       <div className="flex gap-2">
                         <input
@@ -413,8 +473,8 @@ export const AdminModal: React.FC = () => {
                         />
                         <button
                           type="button"
-                          onClick={() => setProfileForm({ ...profileForm, profileImage: '/profile_clean.png' })}
-                          className="px-3 py-2 rounded-xl bg-neutral-200 dark:bg-neutral-700 text-xs font-medium hover:bg-neutral-300"
+                          onClick={() => setProfileForm({ ...profileForm, profileImage: './profile_clean.png' })}
+                          className="px-3 py-2 rounded-xl bg-neutral-200 dark:bg-neutral-700 text-xs font-medium hover:bg-neutral-300 cursor-pointer"
                         >
                           Restaurar Foto Oficial
                         </button>
@@ -461,7 +521,7 @@ export const AdminModal: React.FC = () => {
                         <button
                           type="button"
                           onClick={() => setEditingProject(null)}
-                          className="text-xs text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200"
+                          className="text-xs text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200 cursor-pointer"
                         >
                           Cancelar
                         </button>
@@ -499,7 +559,7 @@ export const AdminModal: React.FC = () => {
                                 tecnologia: 'Tecnologia & Sistemas',
                                 negocios: 'Operações & Gestão',
                                 hardware: 'Hardware & Suporte',
-                                audiovisual: 'Audiovisual & Mídia'
+                                midia: 'Mídia Visual & Eventos'
                               };
                               setEditingProject({
                                 ...editingProject,
@@ -512,7 +572,7 @@ export const AdminModal: React.FC = () => {
                             <option value="tecnologia">Tecnologia & Sistemas</option>
                             <option value="negocios">Operações & Gestão</option>
                             <option value="hardware">Hardware & Suporte</option>
-                            <option value="audiovisual">Audiovisual & Mídia</option>
+                            <option value="midia">Mídia Visual & Eventos</option>
                           </select>
                         </div>
 
@@ -542,6 +602,22 @@ export const AdminModal: React.FC = () => {
                             rows={3}
                             value={editingProject.description}
                             onChange={(e) => setEditingProject({ ...editingProject, description: e.target.value })}
+                            className="w-full px-3 py-2 rounded-xl bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-sm"
+                          />
+                        </div>
+
+                        <div className="sm:col-span-2">
+                          <label className="block text-xs font-semibold mb-1">
+                            Destaques / Itens Entregues (1 por linha)
+                          </label>
+                          <textarea
+                            rows={3}
+                            placeholder="Exemplo:&#10;Captação por Comando de Voz & IA&#10;Sincronização em tempo real de estoque"
+                            value={(editingProject.features || []).join('\n')}
+                            onChange={(e) => setEditingProject({
+                              ...editingProject,
+                              features: e.target.value.split('\n').map((line) => line.trim()).filter(Boolean)
+                            })}
                             className="w-full px-3 py-2 rounded-xl bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-sm"
                           />
                         </div>
@@ -586,13 +662,13 @@ export const AdminModal: React.FC = () => {
                         <button
                           type="button"
                           onClick={() => setEditingProject(null)}
-                          className="px-4 py-2 rounded-xl bg-neutral-200 dark:bg-neutral-700 text-xs font-medium"
+                          className="px-4 py-2 rounded-xl bg-neutral-200 dark:bg-neutral-700 text-xs font-medium cursor-pointer"
                         >
                           Cancelar
                         </button>
                         <button
                           type="submit"
-                          className="inline-flex items-center gap-1.5 px-5 py-2 rounded-xl bg-brand-lime text-black font-bold text-xs hover:opacity-90 shadow-xs"
+                          className="inline-flex items-center gap-1.5 px-5 py-2 rounded-xl bg-brand-lime text-black font-bold text-xs hover:opacity-90 shadow-xs cursor-pointer"
                         >
                           <Save className="w-3.5 h-3.5" />
                           <span>Salvar Card</span>
@@ -611,7 +687,7 @@ export const AdminModal: React.FC = () => {
                         </div>
                         <button
                           onClick={handleStartNewProject}
-                          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-neutral-950 dark:bg-brand-lime text-white dark:text-black font-bold text-xs hover:opacity-90 shadow-xs"
+                          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-neutral-950 dark:bg-brand-lime text-white dark:text-black font-bold text-xs hover:opacity-90 shadow-xs cursor-pointer"
                         >
                           <Plus className="w-4 h-4" />
                           <span>Adicionar Card</span>
@@ -628,7 +704,7 @@ export const AdminModal: React.FC = () => {
                               <img
                                 src={proj.image}
                                 alt={proj.title}
-                                className="w-12 h-12 rounded-xl object-cover shrink-0"
+                                className={`w-12 h-12 rounded-xl ${proj.id === 'gestoo-app' || proj.id === 'doce-bencao' ? 'object-contain bg-white p-1' : 'object-cover'} shrink-0 border border-neutral-200 dark:border-neutral-700`}
                               />
                               <div className="min-w-0">
                                 <h5 className="font-bold text-sm truncate">{proj.title}</h5>
@@ -645,14 +721,14 @@ export const AdminModal: React.FC = () => {
                                   setEditingProject(proj);
                                   setIsNewProject(false);
                                 }}
-                                className="p-2 rounded-xl hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-300 transition-colors"
+                                className="p-2 rounded-xl hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-300 transition-colors cursor-pointer"
                                 title="Editar"
                               >
                                 <Edit2 className="w-4 h-4" />
                               </button>
                               <button
                                 onClick={() => handleDeleteProject(proj.id, proj.title)}
-                                className="p-2 rounded-xl hover:bg-red-100 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 transition-colors"
+                                className="p-2 rounded-xl hover:bg-red-100 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 transition-colors cursor-pointer"
                                 title="Excluir"
                               >
                                 <Trash2 className="w-4 h-4" />
@@ -678,7 +754,7 @@ export const AdminModal: React.FC = () => {
                     </div>
                     <button
                       type="submit"
-                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-brand-lime text-black font-bold text-xs hover:opacity-90 shadow-xs"
+                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-brand-lime text-black font-bold text-xs hover:opacity-90 shadow-xs cursor-pointer"
                     >
                       <Save className="w-3.5 h-3.5" />
                       <span>Salvar Contatos</span>
@@ -746,29 +822,129 @@ export const AdminModal: React.FC = () => {
                       />
                     </div>
                   </div>
+                </form>
+              )}
+
+              {/* TAB 5: BACKUP & DATA STORAGE (SOLVES USER'S CONCERN ABOUT DATA LOSS) */}
+              {activeTab === 'storage' && (
+                <div className="space-y-6">
+                  <div>
+                    <h4 className="text-lg font-bold flex items-center gap-2">
+                      <Database className="w-5 h-5 text-brand-lime" />
+                      <span>Backup & Segurança dos Dados Salvos</span>
+                    </h4>
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
+                      Gerencie o armazenamento, faça download de cópias de segurança (.json) e restaure seus dados em qualquer dispositivo.
+                    </p>
+                  </div>
+
+                  {/* Status Banner */}
+                  <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 flex items-start gap-3">
+                    <ShieldCheck className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                    <div>
+                      <h5 className="text-xs font-bold text-emerald-900 dark:text-emerald-300">
+                        Armazenamento Ativo & Protegido (v2)
+                      </h5>
+                      <p className="text-xs text-emerald-800 dark:text-emerald-400 mt-0.5 leading-relaxed">
+                        Seus dados são salvos localmente no navegador com espelho de contingência na sessão. Para garantir que nunca perca nenhuma alteração ao trocar de computador ou limpar o navegador, baixe um arquivo de backup abaixo.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Actions Grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {/* Action 1: Download Backup */}
+                    <div className="p-5 rounded-2xl bg-neutral-50 dark:bg-[#1a1e27] border border-neutral-200 dark:border-neutral-700 flex flex-col justify-between">
+                      <div>
+                        <div className="w-9 h-9 rounded-xl bg-neutral-200 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 flex items-center justify-center mb-3">
+                          <Download className="w-4 h-4" />
+                        </div>
+                        <h5 className="font-bold text-sm">Baixar Arquivo de Backup</h5>
+                        <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1 leading-relaxed">
+                          Gera e baixa um arquivo <code>.json</code> completo no seu computador com todas as suas informações pessoais, cards e avaliações.
+                        </p>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={handleDownloadBackup}
+                        className="mt-4 w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-neutral-900 dark:bg-brand-lime text-white dark:text-black font-bold text-xs hover:opacity-90 shadow-xs cursor-pointer"
+                      >
+                        <Download className="w-3.5 h-3.5" />
+                        <span>Baixar Backup (.json)</span>
+                      </button>
+                    </div>
+
+                    {/* Action 2: Import Backup */}
+                    <div className="p-5 rounded-2xl bg-neutral-50 dark:bg-[#1a1e27] border border-neutral-200 dark:border-neutral-700 flex flex-col justify-between">
+                      <div>
+                        <div className="w-9 h-9 rounded-xl bg-neutral-200 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 flex items-center justify-center mb-3">
+                          <Upload className="w-4 h-4" />
+                        </div>
+                        <h5 className="font-bold text-sm">Restaurar de um Backup</h5>
+                        <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1 leading-relaxed">
+                          Envie um arquivo <code>.json</code> de backup salvo anteriormente para restaurar todo o seu portfólio neste navegador.
+                        </p>
+                      </div>
+
+                      <input
+                        type="file"
+                        ref={fileInputRef}
+                        accept=".json,application/json"
+                        onChange={handleFileUpload}
+                        className="hidden"
+                      />
+
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="mt-4 w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-neutral-200 dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200 font-bold text-xs hover:bg-neutral-300 dark:hover:bg-neutral-600 cursor-pointer"
+                      >
+                        <Upload className="w-3.5 h-3.5" />
+                        <span>Selecionar Arquivo Backup</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Action 3: Copy JSON to Clipboard */}
+                  <div className="p-4 rounded-2xl bg-neutral-50 dark:bg-[#1a1e27] border border-neutral-200 dark:border-neutral-700 flex flex-col sm:flex-row items-center justify-between gap-3">
+                    <div>
+                      <h5 className="font-bold text-sm">Copiar JSON Completo</h5>
+                      <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                        Copia todo o texto dos dados para colar ou salvar onde preferir.
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleCopyJSON}
+                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-neutral-300 dark:border-neutral-600 text-xs font-semibold text-neutral-800 dark:text-neutral-200 hover:bg-neutral-200 dark:hover:bg-neutral-700 cursor-pointer shrink-0"
+                    >
+                      {jsonCopied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+                      <span>{jsonCopied ? 'Copiado!' : 'Copiar Texto JSON'}</span>
+                    </button>
+                  </div>
 
                   {/* Reset to defaults button */}
-                  <div className="pt-6 border-t border-neutral-200 dark:border-neutral-800 flex justify-between items-center">
+                  <div className="pt-4 border-t border-neutral-200 dark:border-neutral-800 flex justify-between items-center">
                     <div>
                       <p className="text-xs font-bold text-neutral-800 dark:text-neutral-200">Restaurar Dados Padrão</p>
-                      <p className="text-[11px] text-neutral-500">Recarrega os textos originais do currículo.</p>
+                      <p className="text-[11px] text-neutral-500">Recarrega os textos originais limpos do currículo oficial.</p>
                     </div>
                     <button
                       type="button"
                       onClick={() => {
-                        if (window.confirm('Tem certeza que deseja restaurar os dados padrões do currículo?')) {
+                        if (window.confirm('Tem certeza que deseja restaurar os dados originais do currículo?')) {
                           resetToDefault();
-                          setProfileForm({ ...data.personalInfo });
-                          showToast('Dados restaurados com sucesso.');
+                          showToast('Dados restaurados para o padrão com sucesso.');
                         }
                       }}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-neutral-300 dark:border-neutral-700 text-xs font-semibold text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-neutral-300 dark:border-neutral-700 text-xs font-semibold text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer"
                     >
                       <RotateCcw className="w-3.5 h-3.5" />
                       <span>Restaurar Padrão</span>
                     </button>
                   </div>
-                </form>
+                </div>
               )}
             </div>
           )}

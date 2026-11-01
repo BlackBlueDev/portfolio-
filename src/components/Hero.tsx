@@ -70,7 +70,7 @@ export const Hero: React.FC<HeroProps> = ({ onContactClick }) => {
                 <span className="font-bold text-neutral-900 dark:text-white block mb-0.5">
                   {personalInfo.city} — Brasil
                 </span>
-                Atuação em Tecnologia · Negócios · Audiovisual · Operações
+                Atuação em Tecnologia · Negócios · Mídia Visual · Operações
               </div>
             </div>
 

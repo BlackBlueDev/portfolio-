@@ -21,8 +21,8 @@ export const Philosophy: React.FC = () => {
       dot: 'bg-emerald-500'
     },
     {
-      title: 'Audiovisual & Mídia',
-      desc: 'Operação de som ao vivo, mesas de áudio, iluminação de palco e projeção Data Show para eventos institucionais.',
+      title: 'Mídia Visual & Eventos',
+      desc: 'Operação de projeção Data Show, iluminação cênica de palco e edição de vídeos para eventos corporativos e institucionais.',
       icon: Radio,
       badge: 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-200 dark:border-purple-900',
       dot: 'bg-purple-500'
@@ -56,7 +56,7 @@ export const Philosophy: React.FC = () => {
           </h2>
 
           <p className="mt-6 text-sm sm:text-base text-neutral-600 dark:text-neutral-300 max-w-2xl mx-auto leading-relaxed">
-            Atuação versátil e resolutiva: da programação de plataformas digitais ao suporte de hardware, sonorização de grandes eventos e modelagem financeira de empresas.
+            Atuação versátil e resolutiva: da programação de plataformas digitais ao suporte de hardware, projeção de grandes eventos e modelagem financeira de empresas.
           </p>
         </div>
 

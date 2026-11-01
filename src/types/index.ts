@@ -1,4 +1,4 @@
-export type ThemeMode = 'light' | 'dark' | 'navy';
+export type ThemeMode = 'dark' | 'light';
 
 export interface ProjectItem {
   id: string;

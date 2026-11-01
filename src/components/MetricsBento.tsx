@@ -23,7 +23,7 @@ export const MetricsBento: React.FC = () => {
         </div>
 
         {/* Skills Categories Pills */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-12">
           {data.skills.map((cat, idx) => (
             <div
               key={idx}
@@ -58,7 +58,7 @@ export const MetricsBento: React.FC = () => {
               </div>
               <h3 className="text-xl font-bold mb-2">Automação por Voz & SaaS</h3>
               <p className="text-xs sm:text-sm text-neutral-400 leading-relaxed">
-                Co-criação da plataforma GestooApp com captação inteligente de lançamentos financeiros via áudio e sincronização automática de estoque.
+                Co-criação da plataforma GestooApp com captação inteligente de lançamentos financeiros via comando de voz e sincronização automática de estoque.
               </p>
             </div>
             <div className="mt-6 flex items-center gap-2 text-xs font-semibold text-brand-lime">

@@ -26,7 +26,7 @@ export const Footer: React.FC = () => {
               <span className="w-1.5 h-1.5 rounded-full bg-brand-lime self-end mb-1" />
             </div>
             <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
-              Tecnologia · Negócios · Audiovisual · Operações
+              Tecnologia · Negócios · Mídia Visual · Operações
             </p>
           </div>
 

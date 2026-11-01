@@ -58,7 +58,7 @@ export const ContactSection: React.FC = () => {
                 Vamos conversar sobre o seu projeto?
               </h2>
               <p className="mt-4 text-sm sm:text-base text-neutral-600 dark:text-neutral-400 leading-relaxed">
-                Estou aberto para oportunidades profissionais (presencial, híbrido ou remoto em Caruaru/PE e todo o Brasil), consultoria de sistemas web, manutenção de computadores ou eventos.
+                Estou aberto para oportunidades profissionais (presencial, híbrido ou remoto em Caruaru/PE e todo o Brasil), consultoria de sistemas web, manutenção de computadores ou mídia visual para eventos.
               </p>
             </div>
 
@@ -165,7 +165,7 @@ export const ContactSection: React.FC = () => {
                   >
                     <option value="saas">Desenvolvimento Web / SaaS / Automação IA</option>
                     <option value="hardware">Manutenção / Montagem de Computador</option>
-                    <option value="audiovisual">Sonorização, Projeção & Edição de Vídeo</option>
+                    <option value="midia">Projeção Visual, Iluminação & Edição de Vídeo</option>
                     <option value="gestao">Gestão Operacional, Custos ou Vendas</option>
                     <option value="recrutamento">Oportunidade de Contratação (Emprego)</option>
                   </select>

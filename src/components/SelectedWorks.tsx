@@ -14,7 +14,7 @@ export const SelectedWorks: React.FC = () => {
     { id: 'tecnologia', label: 'Tecnologia & Sistemas' },
     { id: 'negocios', label: 'Operações & Gestão' },
     { id: 'hardware', label: 'Hardware & Suporte' },
-    { id: 'audiovisual', label: 'Audiovisual & Mídia' },
+    { id: 'midia', label: 'Mídia Visual & Eventos' },
   ];
 
   const filteredProjects = selectedCategory === 'all'
@@ -36,7 +36,7 @@ export const SelectedWorks: React.FC = () => {
             </h2>
           </div>
           <p className="text-sm text-neutral-500 dark:text-neutral-400 max-w-md leading-relaxed">
-            Plataformas SaaS inovadoras, serviços especializados de hardware, produções audiovisuais e gestão operacional prática.
+            Plataformas SaaS inovadoras, serviços especializados de hardware, produções multimídia e gestão operacional prática.
           </p>
         </div>
 
@@ -70,7 +70,7 @@ export const SelectedWorks: React.FC = () => {
                 <img
                   src={project.image}
                   alt={project.title}
-                  className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                  className={`w-full h-full ${project.id === 'gestoo-app' || project.id === 'doce-bencao' ? 'object-contain p-3 bg-white' : 'object-cover'} object-center group-hover:scale-105 transition-transform duration-500`}
                   loading="lazy"
                 />
                 

@@ -6,9 +6,8 @@ export const TechMarquee: React.FC = () => {
     { name: 'Doce Bênção', icon: '◈' },
     { name: 'BlackBlueDev', icon: '◒' },
     { name: 'Cloudflare', icon: '❖' },
-    { name: 'Netlify', icon: '◓' },
     { name: 'Hardware Pro', icon: '◇' },
-    { name: 'Audiovisual Live', icon: '▲' },
+    { name: 'Mídia & Eventos', icon: '▲' },
   ];
 
   const techLogos = [
