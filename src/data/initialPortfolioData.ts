@@ -78,6 +78,41 @@ export const initialPortfolioData: PortfolioData = {
       }
     },
     {
+      id: 'cifro-app',
+      title: 'Cifro',
+      subtitle: 'App Android de Cifras para Palco & Portal Gratuito de Ensino Musical',
+      category: 'tecnologia',
+      categoryLabel: 'App Android & Web',
+      tag: 'App Android • Web & Ensino Gratuito',
+      description: 'Aplicativo Android que simplifica as cifras do Cifra Club para músicos no palco (100% offline e sem anúncios), acompanhado do website oficial para instalação do app e ferramentas de ensino musical disponibilizadas de forma totalmente gratuita.',
+      features: [
+        'Cifras Simplificadas para Palco: Importação cirúrgica de cifras do Cifra Club sem tablaturas ou distrações, com Smart Capo e transposição de tom preservando o alinhamento das sílabas.',
+        'Modo Palco 100% Offline: Interface de alto contraste pensada para apresentações ao vivo, com diagramas de acordes no topo, autoscroll suave e modo 2 colunas anti-scroll.',
+        'Website de Instalação & Ensino Gratuito: Portal oficial para download direto do APK Android, simulador interativo de palco e biblioteca gratuita de métodos e ferramentas didáticas para músicos (do iniciante ao avançado).'
+      ],
+      technologies: ['App Android', 'React', 'TypeScript', 'Modo Offline', 'Simulador Web', 'Ensino Musical'],
+      image: './cifro-cover.jpg',
+      link: 'https://cifroo.netlify.app/',
+      github: 'https://github.com/BlackBlueDev/cifroo'
+    },
+    {
+      id: 'tabernaculo-de-davi',
+      title: 'Igreja Tabernáculo de Davi',
+      subtitle: 'Website Institucional — Casa de Oração (Caruaru, PE)',
+      category: 'tecnologia',
+      categoryLabel: 'Website Institucional',
+      tag: 'Web Design • Site Institucional',
+      description: 'Website institucional desenvolvido para a Igreja Tabernáculo de Davi (Casa de Oração em Caruaru/PE), apresentando a identidade da igreja, agenda de cultos, liderança pastoral, ministérios, palavra diária interativa, área de contribuição e localização integrada.',
+      features: [
+        'Agenda & Liturgia Semanal: Organização clara dos horários de cultos e reuniões presenciais, com atalhos diretos de rota pelo Google Maps e Waze para visitantes.',
+        'Identidade, História & Ministérios: Apresentação institucional da liderança pastoral, missão, visão, valores bíblicos e vitrine completa dos ministérios ativos da igreja.',
+        'Recursos Interativos & Contribuição: Seção de versículo diário com compartilhamento rápido no WhatsApp e módulo prático de dízimos e ofertas via PIX Copia e Cola e QR Code.'
+      ],
+      technologies: ['Desenvolvimento Web', 'UI/UX Design', 'HTML5', 'CSS3', 'JavaScript', 'Design Institucional'],
+      image: './tabernaculo-cover.jpg',
+      link: 'https://tabernaculodedavi.netlify.app/website-desktop/'
+    },
+    {
       id: 'doce-bencao',
       title: 'Doce Bênção',
       subtitle: 'Doceria Gourmet & Gestão Comercial',

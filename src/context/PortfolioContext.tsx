@@ -23,7 +23,8 @@ interface PortfolioContextType {
   importDataJSON: (jsonString: string) => { success: boolean; error?: string };
 }
 
-const STORAGE_KEY = 'mickael_portfolio_data_v5';
+const STORAGE_KEY = 'mickael_portfolio_data_v6';
+const STORAGE_KEY_V5 = 'mickael_portfolio_data_v5';
 const STORAGE_KEY_V4 = 'mickael_portfolio_data_v4';
 const STORAGE_KEY_V3 = 'mickael_portfolio_data_v3';
 const STORAGE_KEY_V2 = 'mickael_portfolio_data_v2';
@@ -189,60 +190,54 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   // Portfolio data state with safe migration and deep merge
   const [data, setData] = useState<PortfolioData>(() => {
+    const injectNewDefaultProjects = (portfolio: PortfolioData): PortfolioData => {
+      const existingIds = new Set(portfolio.projects.map((p) => p.id));
+      const newDefaults = initialPortfolioData.projects.filter(
+        (p) => (p.id === 'cifro-app' || p.id === 'tabernaculo-de-davi') && !existingIds.has(p.id)
+      );
+      if (newDefaults.length === 0) return portfolio;
+
+      const gestooIdx = portfolio.projects.findIndex((p) => p.id === 'gestoo-app');
+      const insertAt = gestooIdx >= 0 ? gestooIdx + 1 : 0;
+      const mergedProjects = [
+        ...portfolio.projects.slice(0, insertAt),
+        ...newDefaults,
+        ...portfolio.projects.slice(insertAt)
+      ];
+      return {
+        ...portfolio,
+        projects: mergedProjects
+      };
+    };
+
     try {
-      // 1. Check current v5 storage key
-      const savedV5 = localStorage.getItem(STORAGE_KEY);
-      if (savedV5) {
-        const parsed = JSON.parse(savedV5);
+      // 1. Check current v6 storage key
+      const savedV6 = localStorage.getItem(STORAGE_KEY);
+      if (savedV6) {
+        const parsed = JSON.parse(savedV6);
         return sanitizeAndMerge(parsed, initialPortfolioData);
       }
 
-      // 2. Check legacy v4 storage key and migrate
-      const savedV4 = localStorage.getItem(STORAGE_KEY_V4);
-      if (savedV4) {
-        const parsed = JSON.parse(savedV4);
-        const migrated = sanitizeAndMerge(parsed, initialPortfolioData);
-        try {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
-          localStorage.removeItem(STORAGE_KEY_V4);
-        } catch (err) {}
-        return migrated;
-      }
+      // 2. Migrate from legacy keys (v5 -> v1) and inject newly added projects
+      const legacyKeys = [
+        STORAGE_KEY_V5,
+        STORAGE_KEY_V4,
+        STORAGE_KEY_V3,
+        STORAGE_KEY_V2,
+        STORAGE_KEY_V1
+      ];
 
-      // 2. Check legacy v3 storage key and migrate
-      const savedV3 = localStorage.getItem(STORAGE_KEY_V3);
-      if (savedV3) {
-        const parsed = JSON.parse(savedV3);
-        const migrated = sanitizeAndMerge(parsed, initialPortfolioData);
-        try {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
-          localStorage.removeItem(STORAGE_KEY_V3);
-        } catch (err) {}
-        return migrated;
-      }
-
-      // 3. Check legacy v2 storage key and migrate
-      const savedV2 = localStorage.getItem(STORAGE_KEY_V2);
-      if (savedV2) {
-        const parsed = JSON.parse(savedV2);
-        const migrated = sanitizeAndMerge(parsed, initialPortfolioData);
-        try {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
-          localStorage.removeItem(STORAGE_KEY_V2);
-        } catch (err) {}
-        return migrated;
-      }
-
-      // 4. Check legacy v1 storage key and migrate
-      const savedV1 = localStorage.getItem(STORAGE_KEY_V1);
-      if (savedV1) {
-        const parsed = JSON.parse(savedV1);
-        const migrated = sanitizeAndMerge(parsed, initialPortfolioData);
-        try {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
-          localStorage.removeItem(STORAGE_KEY_V1);
-        } catch (err) {}
-        return migrated;
+      for (const legacyKey of legacyKeys) {
+        const savedLegacy = localStorage.getItem(legacyKey);
+        if (savedLegacy) {
+          const parsed = JSON.parse(savedLegacy);
+          const migrated = injectNewDefaultProjects(sanitizeAndMerge(parsed, initialPortfolioData));
+          try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
+            localStorage.removeItem(legacyKey);
+          } catch (err) {}
+          return migrated;
+        }
       }
     } catch (e) {
       console.error('Error loading portfolio data from localStorage:', e);

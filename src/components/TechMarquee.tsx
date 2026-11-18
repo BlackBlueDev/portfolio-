@@ -3,22 +3,23 @@ import React from 'react';
 export const TechMarquee: React.FC = () => {
   const partnersLogos = [
     { name: 'O GestooApp', icon: '✦' },
+    { name: 'Cifro', icon: '♪' },
+    { name: 'Tabernáculo de Davi', icon: '❖' },
     { name: 'Doce Bênção', icon: '◈' },
     { name: 'BlackBlueDev', icon: '◒' },
-    { name: 'Cloudflare', icon: '❖' },
     { name: 'Hardware Pro', icon: '◇' },
     { name: 'Mídia & Eventos', icon: '▲' },
   ];
 
   const techLogos = [
-    { name: 'React', badge: '⚛️ React 19' },
+    { name: 'React', badge: '⚛️ React' },
+    { name: 'Android', badge: '📱 Apps Android' },
     { name: 'Tailwind CSS', badge: '🎨 Tailwind' },
     { name: 'TypeScript', badge: '🔷 TypeScript' },
     { name: 'JavaScript', badge: '🟨 JavaScript' },
     { name: 'Node.js', badge: '🟢 Node.js' },
     { name: 'Automação IA', badge: '🎙️ Voz & IA' },
     { name: 'Windows 11 Hardware', badge: '💻 Hardware' },
-    { name: 'Mobile First', badge: '📱 Mobile-First' },
   ];
 
   return (
